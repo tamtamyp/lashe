@@ -1,0 +1,11 @@
+2025-03-14T16:08:56+00:00 CRITICAL Uncaught Error: Call to undefined method ElementorPro\Core\Utils::_unstable_check_document_permissions() in E:\laragon\www\lashe\wp-content\plugins\elementor-pro\modules\payments\module.php:146
+Stack trace:
+#0 [internal function]: ElementorPro\Modules\Payments\Module->get_stripe_tax_rates(Array, Object(Elementor\Core\Common\Modules\Ajax\Module))
+#1 E:\laragon\www\lashe\wp-content\plugins\elementor\core\common\modules\ajax\module.php(175): call_user_func(Array, Array, Object(Elementor\Core\Common\Modules\Ajax\Module))
+#2 E:\laragon\www\lashe\wp-includes\class-wp-hook.php(324): Elementor\Core\Common\Modules\Ajax\Module->handle_ajax_request('')
+#3 E:\laragon\www\lashe\wp-includes\class-wp-hook.php(348): WP_Hook->apply_filters('', Array)
+#4 E:\laragon\www\lashe\wp-includes\plugin.php(517): WP_Hook->do_action(Array)
+#5 E:\laragon\www\lashe\wp-admin\admin-ajax.php(192): do_action('wp_ajax_element...')
+#6 {main}
+  thrown in E:\laragon\www\lashe\wp-content\plugins\elementor-pro\modules\payments\module.php on line 146
+
