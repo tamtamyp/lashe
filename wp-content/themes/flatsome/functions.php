@@ -566,18 +566,3 @@ function custom_category_menu_shortcode() {
   <?php
   return ob_get_clean();
 }
-add_shortcode('category_menu_custome', 'custom_category_menu_shortcode');
-function custom_woocommerce_text_translation( $translated_text, $text, $domain ) {
-  if ( $domain === 'woocommerce' ) {
-      switch ( $text ) {
-          case 'Subtotal':
-              return 'Tổng cộng';
-          case 'View cart':
-              return 'Xem giỏ hàng';
-          case 'Checkout':
-              return 'Thanh toán';
-      }
-  }
-  return $translated_text;
-}
-add_filter( 'gettext', 'custom_woocommerce_text_translation', 20, 3 );
