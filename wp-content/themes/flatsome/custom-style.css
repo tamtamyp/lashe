@@ -419,3 +419,65 @@ div.elementor-message-danger {
 div.elementor-message-success {
   display: none;
 }
+
+
+
+.image-sale-container:hover + .size-var-content {
+  visibility: visible;
+  opacity: 1;
+}
+.size-var-content {
+  visibility: hidden;
+  opacity: 0;
+}
+.size-container-custom {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa các kích thước */
+  align-items: center;
+}
+.size-item-custom {
+  position: relative;
+}
+
+.size-box-custom {
+  width: 35px;
+  height: 35px;
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 17px;
+  border: 1px solid #ddd;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.size-box-custom:hover {
+  background-color: black;
+  color: white;
+}
+.price-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.current-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+
+.original-price {
+  font-size: 13px;
+  color: grey;
+  text-decoration: line-through;
+}
+
+.discount-percent {
+  font-size: 13px;
+  color: red;
+}

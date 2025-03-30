@@ -228,3 +228,269 @@ function list_child_pages_shortcode($atts)
   return ob_get_clean();
   }
   add_shortcode('list_child_pages', 'list_child_pages_shortcode');
+// Hàm lấy mã màu từ taxonomy hoặc từ HTML class
+function get_color_code_from_taxonomy($term_slug, $taxonomy) {
+  $term = get_term_by('slug', $term_slug, $taxonomy);
+
+  if (!$term) {
+      return '';
+  }
+
+  // Lấy tất cả metadata của term
+  $term_meta = get_term_meta($term->term_id);
+
+  // Kiểm tra các key phổ biến
+  $possible_keys = ['product_attribute_color', 'swatch_color', 'pa_color', 'pa_mau-sac'];
+
+  foreach ($possible_keys as $key) {
+      if (!empty($term_meta[$key][0])) {
+          return $term_meta[$key][0]; // Trả về mã màu nếu tìm thấy
+      }
+  }
+
+  return ''; // Trả về chuỗi rỗng nếu không tìm thấy
+}
+
+// Hàm lấy biến thể của sản phẩm
+function get_variations_from_current_product($product_id) {
+  $variations_list = [];
+  $unique_colors = []; // Mảng để kiểm tra trùng lặp mã màu
+  $unique_sizes = []; // Mảng để kiểm tra trùng lặp mã màu
+  $product = wc_get_product($product_id);
+
+  if ($product && $product->is_type('variable')) {
+      $variations = $product->get_children();
+
+      foreach ($variations as $variation_id) {
+          $variation_obj = wc_get_product($variation_id);
+
+          if ($variation_obj && $variation_obj->exists()) {
+              $attributes = $variation_obj->get_attributes();
+              $color_code = '';
+              $kich_thuoc = '';
+
+              // Lấy mã màu từ thuộc tính pa_mau-sac
+              if (isset($attributes['pa_mau-sac'])) {
+                  $color_slug = $attributes['pa_mau-sac'];
+                  $color_code = get_color_code_from_taxonomy($color_slug, 'pa_mau-sac');
+                  
+                  // Chỉ thêm mã màu nếu chưa tồn tại trong mảng $unique_colors
+                  if ($color_code && !in_array($color_code, $unique_colors)) {
+                      $unique_colors[] = $color_code;
+                  }
+              }
+
+              // Lấy kích thước từ thuộc tính pa_kich-thuoc
+              if (isset($attributes['kich-thuoc'])) {
+                $kich_thuoc = $attributes['kich-thuoc'];
+                
+                if ($kich_thuoc && !in_array($kich_thuoc, $unique_sizes)) {
+                    $unique_sizes[] = $kich_thuoc;  // Thêm vào danh sách kích thước duy nhất
+                }
+            }
+            else if(isset($attributes['pa_kich-thuoc'])){
+              $kich_thuoc = $attributes['pa_kich-thuoc'];
+            
+              if ($kich_thuoc && !in_array($kich_thuoc, $unique_sizes)) {
+                  $unique_sizes[] = $kich_thuoc;  // Thêm vào danh sách kích thước duy nhất
+              }
+            }
+
+              $variations_list[] = [
+                  'variation_id' => $variation_obj->get_id(),
+                  'price'        => $variation_obj->get_price(),
+                  'sale_price'   => $variation_obj->get_sale_price(),
+                  'image'        => wp_get_attachment_image_url($variation_obj->get_image_id(), 'thumbnail'),
+                  'attributes'   => $attributes,
+                  'color_code'   => $color_code,
+                  'kich_thuoc'   => $kich_thuoc,
+                  'stock'        => $variation_obj->get_stock_quantity(),
+              ];
+          }
+      }
+  }
+
+  return [
+      'variations_list' => $variations_list,
+      'unique_colors'   => $unique_colors,
+      'unique_sizes'   => $unique_sizes
+  ];
+}
+
+// Shortcode lấy biến thể của sản phẩm hiện tại
+add_shortcode('get_current_product_variations', function() {
+  global $product;
+
+  $product_id = ($product && is_a($product, 'WC_Product')) ? $product->get_id() : get_the_ID();
+  
+  if (!$product_id) {
+      return 'Không tìm thấy sản phẩm hiện tại.';
+  }
+
+  $result = get_variations_from_current_product($product_id);
+  $variations = $result['variations_list'];
+  $unique_colors = $result['unique_colors'];
+
+  if (empty($variations)) {
+      return '';
+  }
+
+  ob_start();
+  ?>
+  <div class="variations-list">
+      <div class="unique-colors">
+          <?php if (!empty($unique_colors)) : ?>
+            <br>
+                  <?php foreach ($unique_colors as $color) : ?>
+                          <span style="display: inline-block; width: 30px; height: 30px; background-color: 
+                              <?php echo esc_attr($color); ?>; border-radius: 50%;"> </span>
+                  <?php endforeach; ?>
+          <?php else : ?>
+          <?php endif; ?>
+      </div>
+  </div>
+  <?php
+  return ob_get_clean();
+});
+
+add_shortcode('get_current_product_size_variations', function() {
+  global $product;
+
+  $product_id = ($product && is_a($product, 'WC_Product')) ? $product->get_id() : get_the_ID();
+  
+  if (!$product_id) {
+      return 'Không tìm thấy sản phẩm hiện tại.';
+  }
+
+  $result = get_variations_from_current_product($product_id);
+  $variations = $result['variations_list'];
+  $unique_sizes = $result['unique_sizes'];
+
+  if (empty($variations)) {
+      return '';
+  }
+
+  ob_start();
+  ?>
+  <div class="variations-list">
+      <div class="unique-colors">
+          <?php if (!empty($unique_sizes)) : ?>
+            <br>
+            <div class="size-container-custom">
+                  <?php foreach ($unique_sizes as $size) : ?>
+                        <div class="size-item-custom">
+                            <div class="size-box-custom"><?php echo esc_html(strtoupper($size)); ?> </div>
+                        </div>
+                  <?php endforeach; ?>
+            </div>
+          <?php else : ?>
+          <?php endif; ?>
+      </div>
+  </div>
+  <?php
+  return ob_get_clean();
+});
+add_shortcode('get_current_product_price_variations', function() {
+  global $product;
+
+  $product_id = ($product && is_a($product, 'WC_Product')) ? $product->get_id() : get_the_ID();
+  
+  if (!$product_id) {
+      return 'Không tìm thấy sản phẩm hiện tại.';
+  }
+
+  $result = get_product_price($product_id);
+
+  $price = $result['price'];
+  $sale_price = $result['sale_price'];
+  ob_start();
+  if($sale_price >0){
+    
+  ?>
+  <div class="price-container">
+        <span class="current-price"><?php echo esc_html(number_format($sale_price, 0, ',', '.')); ?>đ</span>
+        <span class="original-price"><?php echo esc_html(number_format($price, 0, ',', '.')); ?>đ</span>
+        <span class="discount-percent">-<?php echo esc_html(calculate_discount_percentage($price, $sale_price)); ?>%</span>
+    </div>
+  <?php
+  }else{
+    ?>
+      <div class="price-container">
+              <span class="current-price"><?php echo esc_html(number_format($price, 0, ',', '.')); ?>đ</span>
+          </div>
+    <?php
+  }
+  return ob_get_clean();
+});
+function get_product_price($product_id) {
+  $product = wc_get_product($product_id);
+  $price = 0;
+  $sale_price = 0;
+
+  if ($product) {
+    if ($product->is_type('variable')) { 
+        $variations = $product->get_children();
+
+        if (!empty($variations)) {
+            $first_variation = wc_get_product($variations[0]);
+            
+            if ($first_variation) {
+                $price = $first_variation->get_regular_price();
+                $sale_price = $first_variation->get_sale_price();
+            }
+        }
+    } else { 
+        $price = $product->get_regular_price();
+        $sale_price = $product->get_sale_price();
+    }
+}
+
+  return [
+      'price' => $price,
+      'sale_price' => $sale_price
+  ];
+}
+
+function calculate_discount_percentage($original_price, $sale_price) {
+  if ($original_price <= 0) return 0; // Tránh chia cho 0
+  $discount = (($original_price - $sale_price) / $original_price) * 100;
+  return round($discount); // Làm tròn tới số nguyên gần nhất
+}
+add_shortcode('get_current_product_sale_variations', function() {
+  global $product;
+
+  $product_id = ($product && is_a($product, 'WC_Product')) ? $product->get_id() : get_the_ID();
+  
+  if (!$product_id) {
+      return 'Không tìm thấy sản phẩm hiện tại.';
+  }
+
+  $result = get_product_price($product_id);
+  $sale_price = $result['sale_price'];
+  ob_start();
+  if($sale_price >0){
+    
+  ?>
+  <span class="p-icon-sale">Sale</span>
+  <?php
+  }
+  return ob_get_clean();
+});
+// Tạo shortcode lấy description của sản phẩm
+function get_product_description_shortcode($atts) {
+  global $product;
+
+  if (!is_product() || !$product) {
+      return 'Không tìm thấy sản phẩm.';
+  }
+
+  // Lấy phần mô tả của sản phẩm
+  $description = $product->get_description();
+
+  if (empty($description)) {
+      return '';
+  }
+
+  return wpautop($description); // Giữ lại định dạng HTML của mô tả
+}
+add_shortcode('product_description', 'get_product_description_shortcode');
