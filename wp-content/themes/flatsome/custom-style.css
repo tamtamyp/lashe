@@ -481,3 +481,7 @@ div.elementor-message-success {
   font-size: 13px;
   color: red;
 }
+
+.quantity.buttons_added {
+  height: 40.1px !important;
+}

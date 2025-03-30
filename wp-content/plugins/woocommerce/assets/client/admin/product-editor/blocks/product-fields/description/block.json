@@ -1,11 +1,14 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 2,
+    "apiVersion": 3,
     "name": "woocommerce/product-description-field",
     "title": "Product description",
     "category": "woocommerce",
     "description": "The product description.",
-    "keywords": ["products", "description"],
+    "keywords": [
+        "products",
+        "description"
+    ],
     "textdomain": "default",
     "attributes": {
         "__contentEditable": {
@@ -20,6 +23,6 @@
         "reusable": false,
         "inserter": false,
         "lock": false,
-        "__experimentalToolbar": false
+        "__experimentalToolbar": true
     }
 }

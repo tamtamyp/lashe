@@ -222,7 +222,7 @@ function list_child_pages_shortcode($atts)
   <?php
   wp_reset_postdata(); // Đặt lại trạng thái sau khi hoàn thành vòng lặp
   else :
-  echo 'Không có trang con.';
+  echo '';
   endif;
   
   return ob_get_clean();
@@ -494,3 +494,90 @@ function get_product_description_shortcode($atts) {
   return wpautop($description); // Giữ lại định dạng HTML của mô tả
 }
 add_shortcode('product_description', 'get_product_description_shortcode');
+
+function custom_category_menu_shortcode() {
+  $categories = get_terms(array(
+      'taxonomy'   => 'category', // Lấy danh mục bài viết
+      'hide_empty' => true, // Chỉ lấy danh mục có bài viết
+  ));
+
+  if (empty($categories) || is_wp_error($categories)) {
+      return '<p>Không có danh mục nào.</p>';
+  }
+
+  $current_category_id = get_queried_object_id();
+
+  ob_start();
+  ?>
+  <div class="menu-container-custome">
+      <div class="menu-header-custome">Danh mục</div>
+      <ul class="menu-list-custome">
+          <?php foreach ($categories as $category) : ?>
+              <?php $active_class = ($category->term_id == $current_category_id) ? ' active-custome' : ''; ?>
+              <li class="menu-item-custome<?php echo $active_class; ?>">
+                  <a href="<?php echo esc_url(get_term_link($category)); ?>">
+                      <?php echo esc_html($category->name); ?>
+                  </a>
+              </li>
+          <?php endforeach; ?>
+      </ul>
+  </div>
+  <style>
+      .menu-container-custome {
+          width: 100%; /* Chiếm 1/3 chiều rộng trang */
+          max-width: 400px; /* Giới hạn độ rộng tối đa */
+          border-radius: 30px; /* Bo viền 30px */
+          overflow: hidden;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .menu-header-custome {
+          background-color: #A70D38;
+          color: white;
+          padding: 10px 15px;
+          font-weight: bold;
+          border-radius: 30px 30px 0 0;
+      }
+      .menu-list-custome {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+      }
+      .menu-item-custome {
+          padding: 12px 15px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          transition: background 0.3s, color 0.3s;
+      }
+      .menu-item-custome a {
+          text-decoration: none;
+          color: black;
+          display: block;
+      }
+      .menu-item-custome:hover {
+          background-color: #f8f8f8;
+      }
+      .menu-item-custome:hover a {
+          color: #A70D38;
+      }
+      .menu-item-custome.active-custome a {
+          color: #A70D38; /* Màu chữ giống hover */
+      }
+  </style>
+  <?php
+  return ob_get_clean();
+}
+add_shortcode('category_menu_custome', 'custom_category_menu_shortcode');
+function custom_woocommerce_text_translation( $translated_text, $text, $domain ) {
+  if ( $domain === 'woocommerce' ) {
+      switch ( $text ) {
+          case 'Subtotal':
+              return 'Tổng cộng';
+          case 'View cart':
+              return 'Xem giỏ hàng';
+          case 'Checkout':
+              return 'Thanh toán';
+      }
+  }
+  return $translated_text;
+}
+add_filter( 'gettext', 'custom_woocommerce_text_translation', 20, 3 );

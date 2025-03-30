@@ -1,0 +1,4 @@
+2025-03-30T06:10:10+00:00 CRITICAL Cannot redeclare custom_category_menu_shortcode() (previously declared in D:\laragon\www\lashe\wp-content\themes\flatsome\functions.php:499) in D:\laragon\www\lashe\wp-content\themes\flatsome\functions.php on line 547
+
+2025-03-30T06:10:33+00:00 CRITICAL Cannot redeclare custom_category_menu_shortcode() (previously declared in D:\laragon\www\lashe\wp-content\themes\flatsome\functions.php:499) in D:\laragon\www\lashe\wp-content\themes\flatsome\functions.php on line 547
+
