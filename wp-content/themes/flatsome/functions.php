@@ -621,7 +621,6 @@ function my_custom_checkout_field_display_admin_order_meta($order){
 
 function custom_product_filters() {
   // Kiểm tra xem có phải trang Shop hoặc danh mục sản phẩm không
-  if (is_shop() || is_product_category()) {
       $args = array(
           'taxonomy'   => 'product_cat', // Dùng taxonomy 'product_cat' cho WooCommerce
           'orderby'    => 'name', // Sắp xếp theo tên danh mục
@@ -670,7 +669,6 @@ function custom_product_filters() {
           </div>
       </form>
       <?php
-  }
   
   return ob_get_clean();
 }
