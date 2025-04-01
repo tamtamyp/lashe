@@ -566,3 +566,131 @@ function custom_category_menu_shortcode() {
   <?php
   return ob_get_clean();
 }
+
+ 
+add_shortcode('category_menu_custome', 'custom_category_menu_shortcode');
+
+add_filter( 'woocommerce_checkout_fields' , 'custom_override_checkout_fields',99 );
+function custom_override_checkout_fields( $fields ) {
+  unset($fields['billing']['billing_company']);
+  unset($fields['billing']['billing_first_name']);
+  unset($fields['billing']['billing_postcode']);
+  unset($fields['billing']['billing_country']);
+  unset($fields['billing']['billing_city']);
+  unset($fields['billing']['billing_state']);
+  unset($fields['billing']['billing_address_2']);
+  $fields['billing']['billing_last_name'] = array(
+    'label' => __('Họ và tên', 'devvn'),
+    'placeholder' => _x('Nhập đầy đủ họ và tên của bạn', 'placeholder', 'devvn'),
+    'required' => true,
+    'class' => array('form-row-wide'),
+    'clear' => true
+  );
+  $fields['billing']['billing_address_1']['placeholder'] = 'Ví dụ: Số xx Ngõ xx Phú Kiều, Bắc Từ Liêm, Hà Nội';
+ 
+  unset($fields['shipping']['shipping_company']);
+  unset($fields['shipping']['shipping_postcode']);
+  unset($fields['shipping']['shipping_country']);
+  unset($fields['shipping']['shipping_city']);
+  unset($fields['shipping']['shipping_state']);
+  unset($fields['shipping']['shipping_address_2']);
+ 
+  $fields['shipping']['shipping_phone'] = array(
+    'label' => __('Điện thoại', 'devvn'),
+    'placeholder' => _x('Số điện thoại người nhận hàng', 'placeholder', 'devvn'),
+    'required' => true,
+    'class' => array('form-row-wide'),
+    'clear' => true
+  );
+  $fields['shipping']['shipping_last_name'] = array(
+    'label' => __('Họ và tên', 'devvn'),
+    'placeholder' => _x('Nhập đầy đủ họ và tên của người nhận', 'placeholder', 'devvn'),
+    'required' => true,
+    'class' => array('form-row-wide'),
+    'clear' => true
+  );
+  $fields['shipping']['shipping_address_1']['placeholder'] = 'Ví dụ: Số xx Ngõ xx Phú Kiều, Bắc Từ Liêm, Hà Nội';
+ 
+  return $fields;
+}
+ 
+add_action( 'woocommerce_admin_order_data_after_shipping_address', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
+function my_custom_checkout_field_display_admin_order_meta($order){
+  echo '<p><strong>'.__('Số ĐT người nhận').':</strong> <br>' . get_post_meta( $order->id, '_shipping_phone', true ) . '</p>';
+}
+
+function custom_product_filters() {
+  // Kiểm tra xem có phải trang Shop hoặc danh mục sản phẩm không
+  if (is_shop() || is_product_category()) {
+      $args = array(
+          'taxonomy'   => 'product_cat', // Dùng taxonomy 'product_cat' cho WooCommerce
+          'orderby'    => 'name', // Sắp xếp theo tên danh mục
+          'order'      => 'ASC', // Thứ tự A-Z
+          'hide_empty' => true, // Chỉ lấy những danh mục có sản phẩm
+      );
+
+      $categories = get_terms($args); 
+      ?>
+      <style>
+        .custom-select {
+          width: 200px;
+          padding: 8px;
+          font-size: 16px;
+          border-radius: 30px; /* Bo góc 30px */
+          border: 1px solid #ccc;
+          background-color: #fff;
+          margin: 5px;
+      }
+
+        </style>
+      <form method="GET" action="" class="product-filters-container">
+          <div style="display: flex;">
+              <!-- Dropdown lọc theo danh mục -->
+              <select name="category" onchange="window.location.href=this.value;" class="custom-select" style="width: 200px;">
+                  <option value="">Danh mục</option>
+                  <?php
+                  foreach ($categories as $category) {
+                      // Xây dựng URL chuyển hướng đến trang danh mục sản phẩm với slug
+                      $category_link = esc_url(home_url("/danh-muc-san-pham/{$category->slug}"));
+
+                      // Kiểm tra xem danh mục có được chọn hay không
+                      $selected = (isset($_GET['category']) && $_GET['category'] === $category->slug) ? 'selected' : '';
+                      echo '<option value="' . $category_link . '" ' . $selected . '>' . esc_html($category->name) . '</option>';
+                  }
+                  ?>
+              </select>
+
+              <!-- Dropdown lọc theo sắp xếp -->
+              <select name="orderby" onchange="this.form.submit();"  class="custom-select"  style="width: 150px;">
+                  <option value="menu_order" <?php selected($_GET['orderby'], 'menu_order'); ?>>Sắp xếp</option>
+                  <option value="date" <?php selected($_GET['orderby'], 'date'); ?>>Mới nhất</option>
+                  <option value="price" <?php selected($_GET['orderby'], 'price'); ?>>Giá tăng dần</option>
+                  <option value="price-desc" <?php selected($_GET['orderby'], 'price-desc'); ?>>Giá giảm dần</option>
+              </select>
+          </div>
+      </form>
+      <?php
+  }
+  
+  return ob_get_clean();
+}
+add_shortcode('product_filters_custom', 'custom_product_filters');
+function get_current_category_image() {
+  if (is_product_category()) { // Kiểm tra xem có đang ở trang danh mục sản phẩm không
+      $term = get_queried_object(); // Lấy thông tin danh mục hiện tại
+      
+      if ($term && isset($term->term_id)) {
+          $thumbnail_id = get_term_meta($term->term_id, 'thumbnail_id', true); // Lấy ID ảnh danh mục
+          
+          if ($thumbnail_id) {
+              $image_url = wp_get_attachment_url($thumbnail_id); // Lấy URL ảnh
+              
+              if ($image_url) {
+                  return '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($term->name) . '" class="category-image"/>';
+              }
+          }
+      }
+  }
+  return ''; // Trả về rỗng nếu không có ảnh
+}
+add_shortcode('category_image', 'get_current_category_image');

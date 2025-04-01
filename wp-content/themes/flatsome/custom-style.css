@@ -485,3 +485,162 @@ div.elementor-message-success {
 .quantity.buttons_added {
   height: 40.1px !important;
 }
+.woocommerce form.checkout {
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+.woocommerce form .form-row input,
+.woocommerce form .form-row select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.woocommerce form .form-row input:focus,
+.woocommerce form .form-row select:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 5px rgba(0, 115, 170, 0.5);
+}
+#place_order {
+  background: #a50e43;
+  color: #fff;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+#place_order:hover {
+  background: #a50e43;
+}
+p#billing_address_1_field {
+  width: 100% !important;
+}
+p#shipping_address_1_field {
+  width: 100%;
+}
+.woocommerce-cart table.cart {
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.woocommerce-cart table.cart th {
+    background: #a50e43;
+    color: white;
+    padding: 6px;
+    font-size: 16px;
+}
+
+.woocommerce-cart table.cart td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+.woocommerce-cart table.cart img {
+  width: 80px;
+  height: auto;
+  border-radius: 5px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.woocommerce-cart table.cart img:hover {
+  transform: scale(1.1);
+}
+.woocommerce-cart table.cart input.qty {
+  width: 50px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.woocommerce button[name="update_cart"] {
+  background: #a50e43;
+  color: white;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease-in-out;
+}
+
+.woocommerce button[name="update_cart"]:hover {
+  background: #a50e43;
+}
+.cart_totals {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart_totals h2 {
+    color: #0073aa;
+    font-size: 20px;
+}
+.woocommerce-cart .wc-proceed-to-checkout a.checkout-button {
+  background: #a50e43;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  display: block;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.woocommerce-cart .wc-proceed-to-checkout a.checkout-button:hover {
+  background: #a50e43;
+}
+.continue-shopping a {
+  background: #a50e43 !important; /* Màu nền xanh */
+  color: white !important;
+  font-size: 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+
+.continue-shopping a:hover {
+  background: #a50e43; /* Màu khi hover */
+  transform: scale(1.05);
+  border: 2px solid #a50e43 !important; /* Viền màu hồng đậm */
+}
+.coupon input#coupon_code {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #a50e43 !important; /* Viền màu hồng đậm */
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.coupon input#coupon_code:focus {
+  border-color: #0073aa; /* Đổi màu viền khi nhập */
+  box-shadow: 0 0 5px rgba(0, 115, 170, 0.5);
+}
+.coupon button[name="apply_coupon"] {
+  background: #a50e43 !important; /* Nền hồng đậm */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.woocommerce-cart .coupon button[name="apply_coupon"]:hover {
+  background: #0073aa; /* Đổi nền sang xanh khi hover */
+}
+.woocommerce-cart .coupon {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+nav.breadcrumbs.flex-row.flex-row-center.heading-font.checkout-breadcrumbs.text-center.strong.h2.uppercase {
+  display: none;
+}
